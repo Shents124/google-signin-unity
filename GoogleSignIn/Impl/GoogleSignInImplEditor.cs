@@ -162,7 +162,14 @@ namespace Google.Impl
         catch(Exception e)
         {
           Status = GoogleSignInStatusCode.ERROR;
+
           Debug.LogException(e);
+          if(e is AggregateException ae)
+          {
+            foreach(var inner in ae.InnerExceptions)
+              Debug.LogException(inner);
+          }
+
           throw;
         }
         finally
@@ -187,7 +194,7 @@ namespace Google.Impl
 
       return request.GetResponseAsStringAsync(encoding);
     }
-    
+
     public static async Task<string> GetResponseAsStringAsync(this HttpWebRequest request,Encoding encoding = null)
     {
       using(var response = await request.GetResponseAsync())

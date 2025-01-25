@@ -91,7 +91,10 @@ public class GoogleSignInHelper {
 
     Exception e = task.getException();
     if(e != null)
+    {
+      logError("onFailure with INTERNAL_ERROR : " + e.getClass().toString() + " " + e.getMessage());
       return CommonStatusCodes.INTERNAL_ERROR;
+    }
 
     return CommonStatusCodes.ERROR;
   }

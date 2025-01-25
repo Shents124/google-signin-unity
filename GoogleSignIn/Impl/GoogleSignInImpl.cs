@@ -187,19 +187,26 @@ namespace Google.Impl {
 	internal static IntPtr GoogleSignIn_Result(HandleRef self) => googleIdTokenCredential.GetRawObject();
 
 	internal static int GoogleSignIn_Status(HandleRef self) => GoogleSignInHelper.CallStatic<int>("getStatus");
-	
+
 	internal static string GoogleSignIn_GetServerAuthCode(HandleRef self) => authorizationResult?.Call<string>("getServerAuthCode");
 
 	internal static string GoogleSignIn_GetUserId(HandleRef self)
 	{
 		try
 		{
-			var idTokenPart = googleIdTokenCredential?.Call<string>("getIdToken")?.Split('.')?.ElementAtOrDefault(1);
-			if(!(idTokenPart?.Length is int length && length > 1))
+			string idTokenFull = googleIdTokenCredential?.Call<string>("getIdToken");
+			string idTokenPart = idTokenFull?.Split('.')?.ElementAtOrDefault(1);
+			if(!(idTokenPart?.Length > 1))
 				return null;
 
-			string fill = new string('=',(4 - (idTokenPart.Length % 4)) % 4);
-			var jobj = Newtonsoft.Json.Linq.JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(idTokenPart + fill)));
+			// Replace URL-safe characters and fix padding
+			idTokenPart = idTokenPart.Replace('-', '+').Replace('_', '/');
+			int mod = idTokenPart.Length % 4;
+			if(mod > 0)
+				idTokenPart += new string('=',4 - mod);
+			var idTokenFromBase64 = Convert.FromBase64String(idTokenPart);
+			var idToken = Encoding.UTF8.GetString(idTokenFromBase64);
+			var jobj = Newtonsoft.Json.Linq.JObject.Parse(idToken);
 			return jobj?["sub"]?.ToString();
 		}
 		catch(Exception e)
@@ -293,7 +300,7 @@ namespace Google.Impl {
 
 	[DllImport(DllName)]
 	internal static extern UIntPtr GoogleSignIn_GetUserId(HandleRef self, [In, Out] byte[] bytes, UIntPtr len);
-		
+
 	internal static string GoogleSignIn_GetServerAuthCode(HandleRef self) =>
 		OutParamsToString((out_string, out_size) => GoogleSignIn_GetServerAuthCode(self, out_string, out_size));
 
