@@ -27,7 +27,10 @@ Also, this new system seem like it did not support email hint. And now require W
 
 Tested in unity 2021.3.21 and unity 6000.0.5
 
-Add UPM dependency with branch tag `https://github.com/Shents124/google-signin-unity#newmigration`
+Simply download the library into your Unity project and access the utilities across your scripts or import it in Unity with the Unity Package Manager using this URL:
+````C#
+https://github.com/Shents124/google-signin-unity.git
+````
 
 ```json
 {
