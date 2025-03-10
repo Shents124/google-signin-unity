@@ -27,7 +27,7 @@ Also, this new system seem like it did not support email hint. And now require W
 
 Tested in unity 2021.3.21 and unity 6000.0.5
 
-Add UPM dependency with branch tag `https://github.com/Thaina/google-signin-unity.git#newmigration`
+Add UPM dependency with branch tag `https://github.com/Shents124/google-signin-unity#newmigration`
 
 ```json
 {
